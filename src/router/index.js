@@ -144,12 +144,12 @@ export default new Router({
 });
 
 export const asyncRouterMap = [
-  //设备监控
+  // 设备监控
   {
     path: '/',
     component: Layout,
     redirect: '/gisMap',
-    name: 'Authority',
+    name: 'monitor',
     meta: {
       title: 'equipmentMonitori',
       icon: 'component',
@@ -162,15 +162,6 @@ export const asyncRouterMap = [
         meta: {
           title: 'GisMap',
           // icon: 'user'
-        },
-      },
-      {
-        path: 'equipment',
-        name: 'equipment',
-        component: () => import('@/view/equipment-manage/index'),
-        meta: {
-          title: 'equipmentManage',
-          // icon: 'peoples'
         },
       },
       {
@@ -193,36 +184,66 @@ export const asyncRouterMap = [
       },
     ],
   },
-  //钱包管理
   {
-    path: '/wallet',
+    path: '/device-center',
     component: Layout,
-    redirect: '/wallet/walletmanage',
-    name: 'wallet',
+    redirect: '/device-center/manage',
+    name: 'DeviceCenter',
     meta: {
-      title: 'walletManage',
+      title: 'deviceCenter',
       icon: 'component',
     },
     children: [
       {
-        path: 'walletmanage',
-        name: 'walletmanage',
-        component: () => import('@/view/walle-manage/index'),
+        path: 'manage',
+        name: 'DeviceManage',
+        component: () => import('@/view/equipment-manage/index'),
         meta: {
-          title: 'walletAccount',
+          title: 'equipmentManage',
+          // icon: 'peoples'
+        },
+      },
+      {
+        path: 'group-manage',
+        name: 'DeviceGroupManage',
+        component: () => import('@/view/device-group/index'),
+        meta: {
+          title: 'deviceGroup',
           // icon: 'user'
         },
-      }, {
-        path: 'walletmanage',
-        name: 'walletmanage',
-        component: () => import('@/view/walle-manage/index'),
-        meta: {
-          title: 'walletAccount',
-          // icon: 'user'
-        },
-      }
+      },
     ],
   },
+  // 钱包管理
+  //   {
+  //     path: '/wallet',
+  //     component: Layout,
+  //     redirect: '/wallet/walletmanage',
+  //     name: 'wallet',
+  //     meta: {
+  //       title: 'walletManage',
+  //       icon: 'component',
+  //     },
+  //     children: [
+  //       {
+  //         path: 'walletmanage',
+  //         name: 'walletmanage',
+  //         component: () => import('@/view/walle-manage/index'),
+  //         meta: {
+  //           title: 'walletAccount',
+  //           // icon: 'user'
+  //         },
+  //       }, {
+  //         path: 'walletmanage',
+  //         name: 'walletmanage',
+  //         component: () => import('@/view/walle-manage/index'),
+  //         meta: {
+  //           title: 'walletAccount',
+  //           // icon: 'user'
+  //         },
+  //       }
+  //     ],
+  //   },
   // 系统管理
   {
     path: '/system',
@@ -242,7 +263,8 @@ export const asyncRouterMap = [
           title: 'userManage',
           // icon: 'user'
         },
-      }, {
+      },
+      {
         path: 'role',
         name: 'role',
         component: () => import('@/view/role-manage/index'),
@@ -250,48 +272,49 @@ export const asyncRouterMap = [
           title: 'roleManage',
           // icon: 'user'
         },
-      }, {
-        path: 'department',
-        name: 'department',
-        component: () => import('@/view/department-manage/index'),
-        meta: {
-          title: 'departmentManage',
-          // icon: 'user'
-        },
-      }
+      },
+      //    {
+      //     path: 'department',
+      //     name: 'department',
+      //     component: () => import('@/view/department-manage/index'),
+      //     meta: {
+      //       title: 'departmentManage',
+      //       // icon: 'user'
+      //     },
+      //   }
     ],
   },
   // 新闻管理
-  {
-    path: '/news',
-    component: Layout,
-    redirect: '/news/newsManage',
-    name: 'news',
-    meta: {
-      title: 'newsManage',
-      icon: 'component',
-    },
-    children: [
-      {
-        path: 'newsManage',
-        name: 'newsManage',
-        component: () => import('@/view/news-center/index'),
-        meta: {
-          title: 'newsCenter',
-          // icon: 'user'
-        },
-      },
-      {
-        path: 'newsManage',
-        name: 'newsManage',
-        component: () => import('@/view/news-center/index'),
-        meta: {
-          title: 'newsCenter',
-          // icon: 'user'
-        },
-      }
-    ],
-  },
+  //   {
+  //     path: '/news',
+  //     component: Layout,
+  //     redirect: '/news/newsManage',
+  //     name: 'news',
+  //     meta: {
+  //       title: 'newsManage',
+  //       icon: 'component',
+  //     },
+  //     children: [
+  //       {
+  //         path: 'newsManage',
+  //         name: 'newsManage',
+  //         component: () => import('@/view/news-center/index'),
+  //         meta: {
+  //           title: 'newsCenter',
+  //           // icon: 'user'
+  //         },
+  //       },
+  //       {
+  //         path: 'newsManage',
+  //         name: 'newsManage',
+  //         component: () => import('@/view/news-center/index'),
+  //         meta: {
+  //           title: 'newsCenter',
+  //           // icon: 'user'
+  //         },
+  //       }
+  //     ],
+  //   },
   // 设备组管理
   {
     path: '/patrol',
@@ -303,15 +326,6 @@ export const asyncRouterMap = [
       icon: 'component',
     },
     children: [
-      {
-        path: 'patrolManage',
-        name: 'patrolManage',
-        component: () => import('@/view/device-group/index'),
-        meta: {
-          title: 'deviceGroup',
-          // icon: 'user'
-        },
-      },
       {
         path: 'patrolEquipment',
         name: 'patrolEquipment',
@@ -329,7 +343,8 @@ export const asyncRouterMap = [
           title: 'patrolEquipmentType',
           // icon: 'user'
         },
-      }, {
+      },
+      {
         path: 'patrolPlan',
         name: 'patrolPlan',
         component: () => import('@/view/patrol-plan/index'),
@@ -337,7 +352,8 @@ export const asyncRouterMap = [
           title: 'patrolPlan',
           // icon: 'user'
         },
-      }, {
+      },
+      {
         path: 'patrolTask',
         name: 'patrolTask',
         component: () => import('@/view/patrol-task/index'),
@@ -345,7 +361,8 @@ export const asyncRouterMap = [
           title: 'patrolTask',
           // icon: 'user'
         },
-      },{
+      },
+      {
         path: 'patrolRecord',
         name: 'patrolRecord',
         component: () => import('@/view/patrol-record/index'),
@@ -353,7 +370,8 @@ export const asyncRouterMap = [
           title: 'patrolRecord',
           // icon: 'user'
         },
-      },{
+      },
+      {
         path: 'maintainTask',
         name: 'maintainTask',
         component: () => import('@/view/maintain-task/index'),
@@ -361,7 +379,8 @@ export const asyncRouterMap = [
           title: 'maintainTask',
           // icon: 'user'
         },
-      },{
+      },
+      {
         path: 'scrapTask',
         name: 'scrapTask',
         component: () => import('@/view/scrap-task/index'),

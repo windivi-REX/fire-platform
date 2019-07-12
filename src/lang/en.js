@@ -68,7 +68,8 @@ export default {
     roleManage: 'Role Manage',
     permission: 'Permission',
     logManage: 'Log Manage',
-    formManage: 'Form Manage'
+    formManage: 'Form Manage',
+    deviceCenter: 'Device Center',
   },
   navbar: {
     logOut: 'Log Out',
