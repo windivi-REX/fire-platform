@@ -31,7 +31,6 @@ import drag from '@/directive/el-dragDialog/index';
 import Element from 'element-ui';
 import VueAwesomeSwiper from 'vue-awesome-swiper';
 import VueTouchKeyboard from 'vue-touch-keyboard';
-import VuePreview from 'vue-preview';
 import echarts from 'echarts';
 import scrollbar from './directive/scrollbar/scrollbar';
 
@@ -39,16 +38,6 @@ import scrollbar from './directive/scrollbar/scrollbar';
 import App from './App';
 Vue.prototype.$echarts = echarts;
 
-Vue.use(VuePreview, {
-  mainClass: 'pswp--minimal--dark',
-  barsSize: { top: 0, bottom: 0 },
-  captionEl: false,
-  fullscreenEl: false,
-  shareEl: false,
-  bgOpacity: 0.85,
-  tapToClose: true,
-  tapToToggleControls: false,
-});
 Vue.use(VueAwesomeSwiper);
 Vue.directive('scrollBar', scrollbar);
 Vue.use(drag);

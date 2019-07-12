@@ -1,17 +1,17 @@
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
   .BundleAnalyzerPlugin;
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const CompressionWebpackPlugin = require('compression-webpack-plugin');
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const CompressionWebpackPlugin = require("compression-webpack-plugin");
 // const zopfli = require("@gfx/zopfli");
 // const BrotliPlugin = require("brotli-webpack-plugin");
 // const AliOssPlugin = require('webpack-oss')
 
-const path = require('path');
+const path = require("path");
 // const PurgecssPlugin = require('purgecss-webpack-plugin')
 // const glob = require('glob-all')
 
 const resolve = dir => path.join(__dirname, dir);
-const IS_PROD = ['production', 'prod'].includes(process.env.NODE_ENV);
+const IS_PROD = ["production", "prod"].includes(process.env.NODE_ENV);
 const productionGzipExtensions = /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i;
 
 // 添加stylus规则
@@ -25,9 +25,9 @@ const productionGzipExtensions = /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i;
 // }
 
 module.exports = {
-  publicPath: './',
+  publicPath: "./",
   // outputDir:"dist",
-  assetsDir: 'static',
+  assetsDir: "static",
   // indexPath:"index.html",
   filenameHashing: true,
   // pages:undefined,
@@ -80,21 +80,21 @@ module.exports = {
               warnings: false,
               drop_console: true,
               drop_debugger: false,
-              pure_funcs: ['console.log'], // 移除console
-            },
+              pure_funcs: ["console.log"] // 移除console
+            }
           },
           sourceMap: false,
-          parallel: true,
-        }),
+          parallel: true
+        })
       );
       plugins.push(
         new CompressionWebpackPlugin({
-          filename: '[path].gz[query]',
-          algorithm: 'gzip',
+          filename: "[path].gz[query]",
+          algorithm: "gzip",
           test: productionGzipExtensions,
           threshold: 10240,
-          minRatio: 0.8,
-        }),
+          minRatio: 0.8
+        })
       );
 
       // 上传文件到oss
@@ -138,35 +138,35 @@ module.exports = {
     // 修复HMR
     config.resolve.symlinks(true);
     // 修复Lazy loading routes Error： Cyclic dependency [https://github.com/vuejs/vue-cli/issues/1669]
-    config.plugin('html').tap(args => {
-      args[0].chunksSortMode = 'none';
+    config.plugin("html").tap(args => {
+      args[0].chunksSortMode = "none";
       return args;
     });
     // 打包分析
     if (process.env.IS_ANALYZ) {
-      config.plugin('webpack-report').use(BundleAnalyzerPlugin, [
+      config.plugin("webpack-report").use(BundleAnalyzerPlugin, [
         {
-          analyzerMode: 'static',
-        },
+          analyzerMode: "static"
+        }
       ]);
     }
-    config.module.rules.delete('svg'); // 重点:删除默认配置中处理svg,
+    config.module.rules.delete("svg"); // 重点:删除默认配置中处理svg,
     config.module
-      .rule('svg-sprite-loader')
+      .rule("svg-sprite-loader")
       .test(/\.svg$/)
-      .include.add(resolve('src/icons')) // 处理svg目录
+      .include.add(resolve("src/icons")) // 处理svg目录
       .end()
-      .use('svg-sprite-loader')
-      .loader('svg-sprite-loader')
+      .use("svg-sprite-loader")
+      .loader("svg-sprite-loader")
       .options({
-        symbolId: 'icon-[name]',
+        symbolId: "icon-[name]"
       });
     config.resolve.alias
-      .set('@', resolve('src'))
-      .set('@api', resolve('src/api'))
-      .set('@assets', resolve('src/assets'))
-      .set('@comp', resolve('src/components'))
-      .set('@views', resolve('src/views'));
+      .set("@", resolve("src"))
+      .set("@api", resolve("src/api"))
+      .set("@assets", resolve("src/assets"))
+      .set("@comp", resolve("src/components"))
+      .set("@views", resolve("src/views"));
     // 压缩图片
     // config.module
     // .rule("images")
@@ -213,7 +213,7 @@ module.exports = {
         // 向全局sass样式传入共享的全局变量
         // data: `@import "~assets/scss/variables.scss";$src: "${process.env.VUE_APP_SRC}";`
         // data: `$src: "${process.env.VUE_APP_SRC}";`
-      },
+      }
       // px转换为rem
       // postcss: {
       // plugins: [
@@ -224,7 +224,7 @@ module.exports = {
       // })
       // ]
       // }
-    },
+    }
   },
   pluginOptions: {
     // 安装vue-cli-plugin-style-resources-loader插件
@@ -236,24 +236,32 @@ module.exports = {
     // ]
     // }
   },
-  parallel: require('os').cpus().length > 1,
+  parallel: require("os").cpus().length > 1,
   pwa: {},
   devServer: {
-    host: '0.0.0.0',
+    host: "0.0.0.0",
     port: 8080,
     https: false,
     hotOnly: false,
     disableHostCheck: true,
     proxy: {
-      '/proxy': {
-        target: `${process.env.VUE_APP_API}`,
+      [process.env.VUE_APP_PROXY]: {
+        target: `${process.env.VUE_APP_SERVER}`,
         ws: true,
         changeOrigin: true,
         pathRewrite: {
-          '^/proxy': '',
-        },
+          ["^" + process.env.VUE_APP_PROXY]: ""
+        }
       },
+      [process.env.VUE_APP_SOCKET_PROXY]: {
+        target: `${process.env.VUE_APP_SOCKET_SERVER}`,
+        ws: true,
+        changeOrigin: true,
+        pathRewrite: {
+          ["^" + process.env.VUE_APP_SOCKET_PROXY]: ""
+        }
+      }
     },
-    before: app => {},
-  },
+    before: app => {}
+  }
 };
