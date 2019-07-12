@@ -1,14 +1,8 @@
 import { getToken } from '@/utils/auth'
 import { Message } from 'element-ui'
-// import NProgress from 'nprogress'
-// import 'nprogress/nprogress.css'
 import { menuList } from './api/login'
 import router from './router'
 import store from './store'
-
-// NProgress.configure({
-//   showSpinner: false
-// })
 
 function filterArr (param) {
   const res = []
@@ -30,28 +24,11 @@ function hasPermission (roles, permissionRoles) {
 
 const whiteList = [
   '/login', // 后台管理入口
-  '/exam',
-  '/exam-init',
-  '/code-setting-init', // 考试端入口
-  '/code-setting',
-  '/select-unit',
-  '/assign-candidate',
-  '/assign-candidate-init',
-  '/arrange-exam',
-  '/arrange-exam-init', // 排号取号端入口
-  '/print-init', // 打印端入口
-  '/print',
-  '/print-ready',
-  '/auto-login',
-  '/exam-yan-shi',
-  '/preview-truefalse',
-  '/preview-choice',
-  '/call-sign-init', // 呼号端入口
-  '/call-sign'
+  '/404',
+  '/401'
 ]
 
 router.beforeEach((to, from, next) => {
-  //   NProgress.start()
   if (getToken()) {
     if (to.path === '/login') {
       next({
@@ -106,11 +83,9 @@ router.beforeEach((to, from, next) => {
       next()
     } else {
       next(`/login?redirect=${to.path}`)
-      //   NProgress.done()
     }
   }
 })
 
 router.afterEach(() => {
-  //   NProgress.done()
 })

@@ -133,7 +133,7 @@ export default {
               localStorage.setItem('password', this.loginForm.password);
               this.loading = false;
               this.$router.push({
-                path: '/service',
+                path: '/',
               });
             })
             .catch(() => {

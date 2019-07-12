@@ -1,17 +1,13 @@
 <template>
-  <div @contextmenu.prevent="$refs.ctxMenu.open" class="container">
+  <div class="container">
     <span style="letter-spacing:30px;">智慧消防平台</span>
-    <context-menu ref="ctxMenu" style="display:none"></context-menu>
   </div>
 </template>
 
 <script>
-import contextMenu from 'vue-context-menu';
 export default {
   name: 'TopToolBar',
-  components: {
-    contextMenu,
-  },
+
   data() {
     return {};
   },

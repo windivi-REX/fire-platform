@@ -45,7 +45,6 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
   response => {
-    debugger;
     const res = response.data;
     if (response.status !== 200 || res.code !== 200) {
       Message({

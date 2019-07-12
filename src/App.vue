@@ -1,11 +1,10 @@
 <template>
   <div id="app">
-    <!-- <shut-down v-if="true"></shut-down> -->
     <top-toolbar></top-toolbar>
     <router-view />
     <copyright></copyright>
     <socket
-      ref="examSocket"
+      ref="socketRef"
       :url="socketUrl"
       retryTime="100"
       retryInterVal="3000"
@@ -18,27 +17,20 @@
 </template>
 
 <script>
-// import ShutDown from '@/components/ShutDown/index'
 import TopToolbar from '@/components/TopToolbar/index';
 import Copyright from '@/components/Copyright/index';
 import Socket from '@/components/Socket/index';
-import * as AppApi from '@/api/app';
-// const { mapMutations } = createNamespacedHelpers('queueSocket');
-// import { getToken } from '@/utils/auth';
 export default {
   name: 'App',
   mixins: [],
   components: {
-    // ShutDown,
     TopToolbar,
     Copyright,
     Socket,
   },
   computed: {},
   created() {},
-  mounted() {
-    this.tryGetExamInfo();
-  },
+  mounted() {},
   data() {
     return {
       hasShutDown: false,

@@ -1,6 +1,5 @@
 <template>
-  <div>
-  </div>
+  <div></div>
 </template>
 
 <script>
@@ -35,9 +34,7 @@ export default {
     initWebSocket() {
       // 初始化weosocket
       this.retryConnectTime++;
-      const wsuri = `ws://${process.env.VUE_APP_SOCKET_API}/websocket/${
-        this.url
-      }`;
+      const wsuri = `ws://${location.host}/websocket/${this.url}`;
       this.websock = new WebSocket(wsuri);
       this.websock.onopen = this.connectSuccess;
       this.websock.onerror = this.connectError;
@@ -69,7 +66,9 @@ export default {
       }
     },
     handleMsg(e) {
-      console.log(`获取到一条服务端消息: ${JSON.stringify(e.data)},url:${this.url}`);
+      console.log(
+        `获取到一条服务端消息: ${JSON.stringify(e.data)},url:${this.url}`,
+      );
       this.$emit(`handleMsg`, e);
     },
     onClose(e) {
