@@ -1,0 +1,47 @@
+$bg-size = 100% 100%
+$node-color = #000000
+$node-line-height = 25px
+
+.circle-img
+  -webkit-animation rotate 10s infinite linear
+  -o-animation rotate 10s infinite linear
+  animation circle 10s infinite linear
+@keyframes circle
+  0%
+    transform rotate(0deg)
+    -webkit-transform rotate(0deg)
+    -moz-transform rotate(0deg)
+  100%
+    transform: rotate(360deg)
+    -webkit-transform: rotate(360deg)
+    -moz-transform: rotate(360deg)
+.main
+  display flex
+  justify-content center
+  align-items center
+.path-img
+  position relative
+  width 70%
+  height 68%
+  background-size 100% 100%
+.node-text
+  width 230px
+  color $node-color
+  line-height $node-line-height
+.node-icon
+  margin-bottom 35px
+.node-modules
+  position absolute
+  display flex
+  flex-direction column
+  align-items center
+.title-text-modules
+  position absolute
+  display flex
+  flex-direction column
+  justify-content center
+  align-items center
+  color #3c97b1
+  font-family lcd
+  font-size 32px
+

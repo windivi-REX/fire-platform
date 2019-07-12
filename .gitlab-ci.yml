@@ -1,0 +1,19 @@
+stages:
+  - test
+  - build
+  - deploy
+beforeScript:
+  script:
+  - npm install
+test:
+  stage: test
+  script:
+    - npm run lint
+
+build:
+  stage: build
+  script:
+    - npm run build
+  only:
+    - dev
+  when: on_success

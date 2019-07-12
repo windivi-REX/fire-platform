@@ -1,0 +1,14 @@
+@font-face {
+  font-family: 'lcd';
+  src: url('lcd.eot');
+  src: url('lcd-webfont.woff') format('woff'), url('lcd-webfont.woff2') format('woff2'), url('lcd.ttf') format('truetype'), url('lcd.eot#iefix') format('embedded-opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* @font-face {
+  font-family: 'lcd';
+  src: url('lcd.ttf');
+  font-weight: normal;
+  font-style: normal;
+} */

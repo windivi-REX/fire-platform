@@ -1,0 +1,46 @@
+// base color
+$blue:#324157;
+$light-blue:#3A71A8;
+$red:#C03639;
+$pink: #E65D6E;
+$green: #30B08F;
+$tiffany: #4AB7BD;
+$yellow:#FEC171;
+$panGreen: #30B08F;
+
+//sidebar
+// $menuText:#bfcbd9;
+$menuText:#000000;
+$menuActiveText:#409EFF;
+// $subMenuActiveText:#f4f4f5; //https://github.com/ElemeFE/element/issues/12951
+$subMenuActiveText:#000000;
+
+// $menuBg:#304156;
+$menuBg:#ffffff;
+// $menuHover:#263445;
+$menuHover:#e7f2fd;
+
+// $subMenuBg:#1f2d3d;
+$subMenuBg:#ffffff;
+// $subMenuHover:#001528;
+$subMenuHover:#e7f2fd;
+
+$sideBarWidth: 240px;
+// topbar
+$topBarHeight: 4.75rem;
+$assign-text-color: #ededed;
+$bg: #2d3a4b;
+$dark_gray: #889aa4;
+$light_gray: #eee;
+// the :export directive is the magic sauce for webpack
+:export {
+  menuText: $menuText;
+  menuActiveText: $menuActiveText;
+  subMenuActiveText: $subMenuActiveText;
+  menuBg: $menuBg;
+  menuHover: $menuHover;
+  subMenuBg: $subMenuBg;
+  subMenuHover: $subMenuHover;
+  sideBarWidth: $sideBarWidth;
+  topBarHeight: $topBarHeight;
+}
