@@ -17,6 +17,7 @@
         <el-tooltip :content="$t('navbar.size')" effect="dark" placement="bottom">
           <size-select class="right-menu-item hover-effect"/>
         </el-tooltip> -->
+
         <el-tooltip class="item" effect="dark" content="退出登陆" placement="bottom-start">
                  <svg class="icon restart top-link-point"
                         aria-hidden="true"
