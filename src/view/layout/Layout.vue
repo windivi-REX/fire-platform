@@ -60,7 +60,7 @@ export default {
 .app-wrapper {
   @include clearfix;
   position: relative;
-  height: 100%;
+  height: calc(100% - $topBarHeight);
   width: 100%;
   &.mobile.openSidebar {
     position: fixed;

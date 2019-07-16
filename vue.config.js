@@ -80,8 +80,7 @@ module.exports = {
     sourceMap: false,
     loaderOptions: {
       sass: {
-        // data: `@import "~assets/scss/variables.scss";$src: "${process.env.VUE_APP_SRC}";`
-        // data: `$src: "${process.env.VUE_APP_SRC}";`
+        data: `@import "@/styles/index.scss";`
       },
     },
   },

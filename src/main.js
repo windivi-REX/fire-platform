@@ -5,7 +5,6 @@ import 'babel-polyfill';
 
 import '@/icons/iconfont/iconfont';
 import '@/icons/iconfont/index.css';
-import '@/styles/index.scss';
 import 'element-ui/lib/theme-chalk/display.css';
 import 'element-ui/lib/theme-chalk/index.css';
 import 'normalize.css/normalize.css';
