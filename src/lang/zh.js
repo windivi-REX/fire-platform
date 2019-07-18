@@ -106,7 +106,12 @@ export default {
     patrolRecord: '巡检记录',
     maintainTask: '维修任务',
     scrapTask: '报废任务',
-    deviceCenter: '设备中心'
+    deviceCenter: '设备中心',
+    deviceManage: '设备管理',
+    fireDistribution: '消防分布',
+    deviceList: '设备列表',
+    partsMarked: '部件标注',
+    locationRegistration: '位置登记',
   },
   navbar: {
     logOut: '退出登录',

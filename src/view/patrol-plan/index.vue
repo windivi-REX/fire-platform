@@ -37,12 +37,12 @@
       style="width: 100%;"
       height="580"
     >
-      <el-table-column align="center" prop="num" label="序号" width="80"></el-table-column>
+      <el-table-column align="center" prop="id" label="序号" width="80"></el-table-column>
       <el-table-column align="center" prop="name" label="计划名称"></el-table-column>
-      <el-table-column align="center" prop="frequency" label="执行频率"></el-table-column>
-      <el-table-column align="center" prop="beginTime" label="开始时间"></el-table-column>
+      <el-table-column align="center" prop="executeFrequency" label="执行频率"></el-table-column>
+      <el-table-column align="center" prop="startTime" label="开始时间"></el-table-column>
       <el-table-column align="center" prop="endTime" label="结束时间"></el-table-column>
-      <el-table-column align="center" prop="state" label="状态"></el-table-column>
+      <el-table-column align="center" prop="status" label="状态"></el-table-column>
       <el-table-column align="center" prop="obj" label="巡检对象"></el-table-column>
       <el-table-column align="center" prop="amount" label="设备数量"></el-table-column>
       <el-table-column align="center" prop="personnel" label="巡检人员"></el-table-column>
@@ -76,23 +76,14 @@
     >
       <div>
         <div style="margin: 20px;"></div>
-        <el-form :model="formLabelAlign" :rules="rules" ref="formLabelAlign" label-width="80px">
+        <el-form :model="pollingData" :rules="rules" ref="pollingData" label-width="80px">
           <el-form-item label="计划名称" prop="name">
-            <el-input v-model="formLabelAlign.name" placeholder="请输入计划名称"></el-input>
-          </el-form-item>
-          <el-form-item label="执行频率" prop="frequency">
-            <el-input-number
-              v-model="formLabelAlign.frequency"
-              controls-position="right"
-              @change="handleChange"
-              :min="1"
-              :max="10"
-            ></el-input-number>
+            <el-input v-model="pollingData.name" placeholder="请输入计划名称"></el-input>
           </el-form-item>
           <el-form-item label="日期" prop="date">
             <el-date-picker
               style="width:100%"
-              v-model="formLabelAlign.date"
+              v-model="pollingData.date"
               type="datetimerange"
               range-separator="至"
               start-placeholder="开始日期"
@@ -101,17 +92,18 @@
           </el-form-item>
           <el-form-item label="任务开始" prop="beginTask">
             <el-input-number
-              v-model="formLabelAlign.beginTask"
+              v-model="pollingData.beginTask"
               controls-position="right"
               @change="handleChange2"
               :min="1"
               :max="10"
             ></el-input-number>
+            <span style="margin-left:10px;">天内按时完成</span>
           </el-form-item>
           <el-form-item label="巡检对象" prop="obj">
             <el-input
-              readonly="true"
-              v-model="formLabelAlign.obj"
+              :readonly="true"
+              v-model="pollingData.obj"
               style="width:200px;"
               placeholder="请选择设备组"
             ></el-input>
@@ -119,8 +111,8 @@
           </el-form-item>
           <el-form-item label="巡检人员" prop="personnel">
             <el-input
-              readonly="true"
-              v-model="formLabelAlign.personnel"
+              :readonly="true"
+              v-model="pollingData.personnel"
               style="width:200px;"
               placeholder="请添加巡检人员"
             ></el-input>
@@ -135,10 +127,10 @@
     </el-dialog>
     <!-- 穿梭框弹框 -->
     <el-dialog title="设备组关联" :visible.sync="equipmentType" width="30%" :before-close="handleClose2">
-      <el-transfer v-model="value" :data="data"></el-transfer>
+      <el-transfer :props="defaultData" filterable v-model="patrolStaffValue" :data="personnelData"></el-transfer>
       <span slot="footer" class="dialog-footer">
         <el-button @click="equipmentType = false">取 消</el-button>
-        <el-button type="primary" @click="equipmentType = false">确 定</el-button>
+        <el-button type="primary" @click="getGroupValue">确 定</el-button>
       </span>
     </el-dialog>
     <!-- 添加巡检人员弹框 -->
@@ -165,13 +157,13 @@
       </el-table>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addPersonnelType = false">取 消</el-button>
-        <el-button type="primary" @click="addPersonnelType = false">确 定</el-button>
+        <el-button type="primary">确 定</el-button>
       </span>
     </el-dialog>
   </el-card>
 </template>
 <script>
-import { getPatrolList } from '../../api/patrolTaskApi.js';
+import { getPatrolList, getPatrolstaff } from '../../api/patrolTaskApi.js';
 export default {
   data() {
     const generateData = _ => {
@@ -180,7 +172,6 @@ export default {
         data.push({
           key: i,
           label: `备选项 ${i}`,
-          disabled: i % 4 === 0,
         });
       }
       return data;
@@ -188,13 +179,19 @@ export default {
     return {
       addPersonnelType: false, // 添加巡检人员弹框
       data: generateData(),
+      personnelData: null, // 穿梭框列表
+      patrolStaffValue: null, // 穿梭框值
       value: [1, 4],
+      defaultData: {
+        key: 'id',
+        label: 'name',
+      },
       equipmentType: false, //设备组弹框
       loadingType: false,
       operationTitle: '新增计划', //弹框 title
       dialogVisible: false, // 新增 和编辑等操作弹框状态
       currentPage4: 4,
-      formLabelAlign: {
+      pollingData: {
         num: 1,
         name: '名称',
         frequency: 1,
@@ -202,7 +199,7 @@ export default {
         beginTime: '2009',
         endTime: '2019',
         state: '状态',
-        obj: '',
+        obj: '', // 设备组名称
         amount: '数量',
         personnel: '',
         createTime: '2018',
@@ -224,27 +221,57 @@ export default {
       tableData2: [],
       paramLimit: 10, // 一页的条数
       paramOffset: 0, // 每页的一条
+      allPage: 0, //列表总条数
+      patrolstaffId: 0, // 设备组id
+      noChecked: '',
+      hasChecked: '',
     };
   },
   created() {
     this.getTableList();
+    this.getPatrolstaffList();
   },
   computed: {},
   methods: {
+    // 获取设备组 value
+    getGroupValue() {
+      this.pollingData.obj = '';
+      console.log(this.personnelData,124)
+      if (this.personnelData.length) {
+        for (let i = 0; i < this.patrolStaffValue.length; i++) {
+          for (let j = 0; j < this.personnelData.length; j++) {
+            if (i === j) {
+              this.pollingData.obj += this.personnelData[j].name + ';';
+            }
+          }
+        }
+      };
+       this.equipmentType = false;
+    },
+    // 获取 设备组列表与所选项
+    async getPatrolstaffList() {
+      let { data, expand } = await getPatrolstaff({ id: this.patrolstaffId });
+      this.personnelData = data;
+      this.patrolStaffValue = expand.deviceGroupIds;
+      //   this.personnelData.forEach(item => {
+      //     (item.key = item.id), (item.label = item.name);
+      //   });
+    },
     // 获取设备列表
     async getTableList() {
       let { data } = await getPatrolList({
         paramLimit: this.paramLimit,
         paramOffset: this.paramOffset,
       });
-      this.tableData = data;
+      this.tableData = data.rows;
+      this.allPage = data.total;
     },
     // 添加巡检人员弹框
     addPersonnel() {
       this.addPersonnelType = true;
     },
     // 选择设备组
-    chooseEquipment() {
+    chooseEquipment(item) {
       this.equipmentType = true;
     },
     handleChange2() {
@@ -259,10 +286,10 @@ export default {
       this.loadingType = true;
       if (item === 1) {
         this.operationTitle = '新增设备组';
-        this.formLabelAlign.name = '';
+        this.pollingData.name = '';
       } else {
         this.operationTitle = '编辑设备组';
-        this.formLabelAlign = item.name;
+        this.pollingData = item.name;
       }
       this.loadingType = false;
       this.dialogVisible = true;
@@ -295,15 +322,16 @@ export default {
     },
     // 提交
     submitForm() {
-      this.$refs.formLabelAlign.validate(valid => {
-        if (valid) {
-          alert('submit!');
-          this.dialogVisible = false;
-        } else {
-          console.log('error submit!!');
-          return false;
-        }
-      });
+      console.log(this.pollingData);
+      //   this.$refs.pollingData.validate(valid => {
+      //     if (valid) {
+      //       alert('submit!');
+      //       this.dialogVisible = false;
+      //     } else {
+      //       console.log('error submit!!');
+      //       return false;
+      //     }
+      //   });
     },
     handleClose() {
       this.dialogVisible = false;
@@ -314,6 +342,7 @@ export default {
     handleClose3() {
       this.addPersonnelType = false;
     },
+    handleSelectionChange() {},
   },
 };
 </script>

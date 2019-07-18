@@ -19,8 +19,21 @@
     <div class="margin-style">设备组管理</div>
     <!-- 搜索功能 -->
     <div class="margin-style">
-      <el-input style="width:200px;" placeholder="请输入计划名称"></el-input>
-      <el-button type="primary" style="margin-left:10px;" icon="el-icon-search">检索</el-button>
+      <el-select v-model="optionValue" clear @change="optionChange" placeholder="请选择任务状态">
+        <el-option
+          v-for="item in EquipmentTypeOption"
+          :key="item.value"
+          :label="item.name"
+          :value="item.value"
+        ></el-option>
+      </el-select>
+      <el-input style="width:200px;margin-left:10px;" v-model="searchValue" placeholder="请输入计划名称"></el-input>
+      <el-button
+        type="primary"
+        style="margin-left:10px;"
+        @click="searchData"
+        icon="el-icon-search"
+      >检索</el-button>
     </div>
     <!-- 功能按钮 -->
     <div class="margin-style">
@@ -36,17 +49,17 @@
       border
       style="width: 100%;"
       height="580"
+      :stripe="true"
     >
-      <el-table-column align="center" prop="num" label="序号" width="80"></el-table-column>
-      <el-table-column align="center" prop="name" label="计划名称"></el-table-column>
-      <el-table-column align="center" prop="frequency" label="执行频率"></el-table-column>
-      <el-table-column align="center" prop="beginTime" label="开始时间"></el-table-column>
+      <el-table-column align="center" type="index" label="序号" width="80"></el-table-column>
+      <el-table-column align="center" prop="taskName" label="任务名称"></el-table-column>
+      <el-table-column align="center" prop="startTime" label="开始时间"></el-table-column>
       <el-table-column align="center" prop="endTime" label="结束时间"></el-table-column>
-      <el-table-column align="center" prop="state" label="状态"></el-table-column>
-      <el-table-column align="center" prop="obj" label="巡检对象"></el-table-column>
-      <el-table-column align="center" prop="amount" label="设备数量"></el-table-column>
-      <el-table-column align="center" prop="personnel" label="巡检人员"></el-table-column>
-      <el-table-column align="center" prop="createTime" label="创建时间"></el-table-column>
+      <el-table-column align="center" prop="taskType" label="任务类型"></el-table-column>
+      <el-table-column align="center" prop="status" label="状态"></el-table-column>
+      <el-table-column align="center" prop="patrolStaff" label="巡检人员"></el-table-column>
+      <el-table-column align="center" prop="deviceGroup" label="巡检对象"></el-table-column>
+      <el-table-column align="center" prop="deviceQuantity" label="设备数量"></el-table-column>
       <el-table-column align="center" prop="manipulation" label="操作">
         <template slot-scope="scope">
           <el-tooltip class="item" effect="dark" content="编辑" placement="top">
@@ -61,9 +74,10 @@
     <!-- 分页 -->
     <el-pagination
       style="text-align: right;"
-      :total="20"
+      :total="allPage"
       :page-sizes="[10, 20, 30, 40]"
       layout="total, sizes, prev, pager, next, jumper"
+      @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="currentPage4"
     ></el-pagination>
@@ -76,23 +90,15 @@
     >
       <div>
         <div style="margin: 20px;"></div>
-        <el-form :model="formLabelAlign" :rules="rules" ref="formLabelAlign" label-width="80px">
+        <el-form :model="pollingData" :rules="rules" ref="pollingData" label-width="80px">
           <el-form-item label="计划名称" prop="name">
-            <el-input v-model="formLabelAlign.name" placeholder="请输入计划名称"></el-input>
-          </el-form-item>
-          <el-form-item label="执行频率" prop="frequency">
-            <el-input-number
-              v-model="formLabelAlign.frequency"
-              controls-position="right"
-              @change="handleChange"
-              :min="1"
-              :max="10"
-            ></el-input-number>
+            <el-input v-model="pollingData.name" placeholder="请输入计划名称"></el-input>
           </el-form-item>
           <el-form-item label="日期" prop="date">
             <el-date-picker
               style="width:100%"
-              v-model="formLabelAlign.date"
+              v-model="pollingData.date"
+              value-format="yyyy-MM-dd HH:mm:ss"
               type="datetimerange"
               range-separator="至"
               start-placeholder="开始日期"
@@ -101,17 +107,17 @@
           </el-form-item>
           <el-form-item label="任务开始" prop="beginTask">
             <el-input-number
-              v-model="formLabelAlign.beginTask"
+              v-model="pollingData.beginTask"
               controls-position="right"
-              @change="handleChange2"
               :min="1"
               :max="10"
             ></el-input-number>
+            <span style="margin-left:10px;">天内按时完成</span>
           </el-form-item>
-          <el-form-item label="巡检对象" prop="obj">
+          <el-form-item label="巡检对象" prop="objData">
             <el-input
-              readonly="true"
-              v-model="formLabelAlign.obj"
+              :readonly="true"
+              v-model="pollingData.objData"
               style="width:200px;"
               placeholder="请选择设备组"
             ></el-input>
@@ -119,8 +125,8 @@
           </el-form-item>
           <el-form-item label="巡检人员" prop="personnel">
             <el-input
-              readonly="true"
-              v-model="formLabelAlign.personnel"
+              :readonly="true"
+              v-model="pollingData.personnel"
               style="width:200px;"
               placeholder="请添加巡检人员"
             ></el-input>
@@ -135,10 +141,10 @@
     </el-dialog>
     <!-- 穿梭框弹框 -->
     <el-dialog title="设备组关联" :visible.sync="equipmentType" width="30%" :before-close="handleClose2">
-      <el-transfer v-model="value" :data="data"></el-transfer>
+      <el-transfer :props="defaultData" filterable v-model="patrolStaffValue" :data="personnelData"></el-transfer>
       <span slot="footer" class="dialog-footer">
         <el-button @click="equipmentType = false">取 消</el-button>
-        <el-button type="primary" @click="equipmentType = false">确 定</el-button>
+        <el-button type="primary" @click="getGroupValue">确 定</el-button>
       </span>
     </el-dialog>
     <!-- 添加巡检人员弹框 -->
@@ -148,139 +154,313 @@
       width="50%"
       :before-close="handleClose3"
     >
-      <el-table
-        ref="multipleTable"
-        :data="tableData2"
-        tooltip-effect="dark"
-        style="width: 100%"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column align="center" type="selection" width="80"></el-table-column>
-        <el-table-column align="center" label="序号">
-          <template slot-scope="scope">{{ scope.row.date }}</template>
-        </el-table-column>
-        <el-table-column align="center" prop="name" label="姓名"></el-table-column>
-        <el-table-column align="center" prop="address" label="部门" show-overflow-tooltip></el-table-column>
-        <el-table-column align="center" prop="address" label="电话" show-overflow-tooltip></el-table-column>
-      </el-table>
+      <div style="height:500px;overflow-y: scroll;">
+        <el-table
+          ref="multipleTable"
+          :data="pollingList"
+          tooltip-effect="dark"
+          style="width: 100%"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column type="index" align="center" label="序号"></el-table-column>
+          <el-table-column align="center" prop="name" label="姓名"></el-table-column>
+          <el-table-column align="center" prop="deptName" label="部门"></el-table-column>
+          <el-table-column align="center" prop="mobile" label="电话"></el-table-column>
+        </el-table>
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addPersonnelType = false">取 消</el-button>
-        <el-button type="primary" @click="addPersonnelType = false">确 定</el-button>
+        <el-button type="primary" @click="addPolling">确 定</el-button>
       </span>
     </el-dialog>
   </el-card>
 </template>
 <script>
-import { getPatrolList } from '../../api/patrolTaskApi.js';
+import {
+  getPatrolList,
+  getPatrolstaff,
+  getPatrolStaffList,
+  addEquipmentGroup,
+  modificationEquipmentGroup,
+  deleteEquipmentGroup,
+  getEquipmentType,
+} from '../../api/patrolTaskApi.js';
 export default {
   data() {
-    const generateData = _ => {
-      const data = [];
-      for (let i = 1; i <= 15; i++) {
-        data.push({
-          key: i,
-          label: `备选项 ${i}`,
-          disabled: i % 4 === 0,
-        });
-      }
-      return data;
-    };
     return {
       addPersonnelType: false, // 添加巡检人员弹框
-      data: generateData(),
-      value: [1, 4],
+      personnelData: null, // 穿梭框列表
+      patrolStaffValue: null, // 穿梭框值
+      pollingList: null, // 巡检人员列表
+      pollingValue: [], // 巡检人员值
+      pollingSaveData: null, // 巡检人员选择的数组
+      defaultData: {
+        key: 'id',
+        label: 'name',
+      },
       equipmentType: false, //设备组弹框
       loadingType: false,
       operationTitle: '新增计划', //弹框 title
       dialogVisible: false, // 新增 和编辑等操作弹框状态
-      currentPage4: 4,
-      formLabelAlign: {
-        num: 1,
-        name: '名称',
-        frequency: 1,
-        date: '',
-        beginTime: '2009',
-        endTime: '2019',
-        state: '状态',
-        obj: '',
-        amount: '数量',
-        personnel: '',
-        createTime: '2018',
-        beginTask: 1,
+      currentPage4: 1,
+      pollingData: {
+        name: '',
+        date: [],
+        taskType: '', //任务类型
+        startTime: '', // 开始时间
+        endTime: '', // 结束时间
+        status: '0', // 状态
+        objData: '', // 巡检对象
+        amount: 0, // 设备数量
+        beginTask: 1, //任务开始的天数
+        personnel: '', //巡检人员
       }, // 表单
       rules: {
         name: [{ required: true, message: '请输入活动名称', trigger: 'blur' }],
-        frequency: [{ required: true, message: '请选择天数', trigger: 'blur' }],
         date: [{ required: true, message: '请选择时间', trigger: 'blur' }],
-        obj: [{ required: true, message: '请选择设备组', trigger: 'blur' }],
-        personnel: [
-          { required: true, message: '请选择设备组', trigger: 'blur' },
-        ],
+        objData: [{ required: true, message: '请选择设备组', trigger: 'blur' }],
         beginTask: [
           { required: true, message: '请选择开始天数', trigger: 'blur' },
         ],
+        personnel: [
+          { required: true, message: '请添加巡检人员', trigger: 'blur' },
+        ],
       }, // 验证
-      tableData: [
-        {
-          num: 1,
-          name: '名称',
-          frequency: 1,
-          beginTime: '2009',
-          endTime: '2019',
-          state: '状态',
-          obj: '对象',
-          amount: '数量',
-          personnel: '人员',
-          createTime: '2018',
-        },
-      ], //列表数据
-      tableData2: [],
+      tableData: [], //列表数据
+      paramLimit: 10, // 一页的条数
+      paramOffset: 0, // 每页的一条
+      allPage: 0, //列表总条数
+      patrolstaffId: 0, // 设备组id
+      itemId: 0, // 列表子项id
+      showList: [],
+      searchValue: '',
+      EquipmentTypeOption: [],
+      optionValue: '',
+      propsDefault: {
+        value: 'value',
+        label: 'name',
+      },
     };
   },
-  async created() {
-    getPatrolList({ patrolSchemeDO: '1' });
+  watch: {
+    paramLimit() {
+      this.getTableList();
+    },
+    paramOffset() {
+      this.getTableList();
+    },
+  },
+  created() {
+    this.getTableList();
+    this.getPatrolstaffList();
+    this.getPatrolStaffTable();
+    this.equipmentTypeList();
   },
   computed: {},
   methods: {
+    // 状态筛选
+    optionChange(val) {
+      this.pollingData.taskType = val;
+    },
+    // 获取任务状态列表
+    async equipmentTypeList() {
+      let { data } = await getEquipmentType();
+      this.EquipmentTypeOption = data;
+    },
+    // 搜索
+    searchData() {
+      this.loadingType = true;
+      this.pollingData.name = this.searchValue;
+      this.getTableList();
+      this.searchValue = '';
+      this.pollingData.name = '';
+      this.loadingType = false;
+      this.pollingData.taskType = '';
+      this.optionValue = '';
+    },
+    //输入框 重置
+    resetInput() {
+      this.pollingData = {
+        name: '',
+        date: [],
+        taskType: '', //任务类型
+        startTime: '', // 开始时间
+        endTime: '', // 结束时间
+        status: '0', // 状态
+        objData: '', // 巡检对象
+        amount: '0', // 设备数量
+        beginTask: 1, //任务开始的天数
+        personnel: '', //巡检人员
+      };
+      this.patrolstaffId = 0;
+      this.patrolStaffValue.length = 0;
+      this.pollingValue.length = 0;
+      this.showList.length = 0;
+    },
+    // 获取巡检人员列表
+    async getPatrolStaffTable() {
+      let { data, expand } = await getPatrolStaffList({
+        id: this.patrolstaffId,
+      });
+      this.pollingList = data;
+      this.pollingValue = expand.patrolStaffIds;
+    },
+    // 获取设备组 value
+    getGroupValue() {
+      this.pollingData.objData = '';
+      if (this.personnelData.length) {
+        for (let i = 0; i < this.patrolStaffValue.length; i++) {
+          for (let j = 0; j < this.personnelData.length; j++) {
+            if (i === j) {
+              this.pollingData.objData += this.personnelData[j].name + ';';
+            }
+          }
+        }
+      }
+      this.equipmentType = false;
+    },
+    // 获取 设备组列表与所选项
+    async getPatrolstaffList() {
+      let { data, expand } = await getPatrolstaff({ id: this.patrolstaffId });
+      this.personnelData = data;
+      this.patrolStaffValue = expand.deviceGroupIds;
+    },
+    // 获取设备列表
+    async getTableList() {
+      let { data } = await getPatrolList({
+        paramLimit: this.paramLimit,
+        paramOffset: this.paramOffset,
+        taskName: this.pollingData.name,
+        taskType: this.pollingData.taskType,
+      });
+      this.tableData = data.rows;
+      this.allPage = data.total;
+    },
     // 添加巡检人员弹框
     addPersonnel() {
+      if (this.pollingValue.length) {
+        this.showList.length = 0;
+        for (let i = 0; i < this.pollingValue.length; i++) {
+          for (let j = 0; j < this.pollingList.length; j++) {
+            if (this.pollingValue[i] == this.pollingList[j].userId) {
+              this.showList.push(this.pollingList[j]);
+            }
+          }
+        }
+      }
       this.addPersonnelType = true;
+      this.$nextTick(() => {
+        if (this.showList) {
+          this.showList.forEach(row => {
+            this.$refs.multipleTable.toggleRowSelection(row);
+          });
+        }
+      });
     },
     // 选择设备组
-    chooseEquipment() {
+    chooseEquipment(item) {
       this.equipmentType = true;
     },
-    handleChange2() {
-      console.log(value);
-    },
-    // 切换天数
-    handleChange(value) {
-      console.log(value);
+    // 获取 开始和结束事件
+    getTime(item) {
+      let startTime = new Date(item.startTime);
+      let endTime = new Date(item.endTime);
+      // 开始时间
+      let startYear = startTime.getFullYear();
+      let startMonth =
+        startTime.getMonth() < 10
+          ? '0' + startTime.getMonth()
+          : startTime.getMonth();
+      let startDate =
+        startTime.getDate() < 10
+          ? '0' + startTime.getDate()
+          : startTime.getDate();
+      let startHours =
+        startTime.getHours() < 10
+          ? '0' + startTime.getHours()
+          : startTime.getHours();
+      let startMinutes =
+        startTime.getMinutes() < 10
+          ? '0' + startTime.getMinutes()
+          : startTime.getMinutes();
+      let startSeconds =
+        startTime.getSeconds() < 10
+          ? '0' + startTime.getSeconds()
+          : startTime.getSeconds();
+      // 结束时间
+      let endYear = endTime.getFullYear();
+      let endMonth =
+        endTime.getMonth() < 10 ? '0' + endTime.getMonth() : endTime.getMonth();
+      let endDate =
+        endTime.getDate() < 10 ? '0' + endTime.getDate() : endTime.getDate();
+      let endHours =
+        endTime.getHours() < 10 ? '0' + endTime.getHours() : endTime.getHours();
+      let endMinutes =
+        endTime.getMinutes() < 10
+          ? '0' + endTime.getMinutes()
+          : endTime.getMinutes();
+      let endSeconds =
+        endTime.getSeconds() < 10
+          ? '0' + endTime.getSeconds()
+          : endTime.getSeconds();
+      let timeArr = [
+        `${startYear}-${startMonth}-${startDate} ${startHours}:${startMinutes}:${startSeconds}`,
+        `${endYear}-${endMonth}-${endDate} ${endHours}:${endMinutes}:${endSeconds}`,
+      ];
+      return timeArr;
     },
     // 新增 和编辑等操作
     operationEquipment(item) {
       this.loadingType = true;
       if (item === 1) {
+        this.resetInput();
         this.operationTitle = '新增设备组';
-        this.formLabelAlign.name = '';
+        this.pollingData.name = '';
       } else {
+        let timearr = this.getTime(item);
+        this.patrolstaffId = item.id;
+        this.getPatrolstaffList();
+        this.getPatrolStaffTable();
         this.operationTitle = '编辑设备组';
-        this.formLabelAlign = item.name;
+        this.itemId = item.id;
+        this.pollingData = {
+          name: item.taskName,
+          date: timearr,
+          taskType: '', //任务类型
+          startTime: item.startTime, // 开始时间
+          endTime: item.endTime, // 结束时间
+          status: item.status, // 状态
+          objData: item.deviceGroup, // 巡检对象
+          amount: item.deviceQuantity, // 设备数量
+          beginTask: item.taskTime, //任务开始的天数
+          personnel: item.patrolStaff, //巡检人员
+        };
       }
       this.loadingType = false;
       this.dialogVisible = true;
     },
     //删除 设备
     deleteEquipment(item) {
-      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
       })
         .then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!',
+          deleteEquipmentGroup(item.id).then(res => {
+            if (res.code === 200) {
+              if (this.tableData.length === 1) {
+                this.paramOffset = this.paramOffset - this.paramLimit;
+                this.currentPage4 - 1;
+              }
+              this.getTableList();
+              this.resetInput();
+              this.$message({
+                type: 'success',
+                message: '删除成功!',
+              });
+            }
           });
         })
         .catch(() => {
@@ -291,19 +471,79 @@ export default {
         });
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      this.paramLimit = val;
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      this.paramOffset = (val - 1) * this.paramLimit;
+      this.currentPage4 - val;
     },
-    // 提交
+    // 新增提交
     submitForm() {
-      this.$refs.formLabelAlign.validate(valid => {
+      this.$refs.pollingData.validate(valid => {
         if (valid) {
-          alert('submit!');
+          if (this.operationTitle === '新增设备组') {
+            addEquipmentGroup({
+              deviceGroup: this.patrolStaffValue.join(','),
+              patrolStaff: this.pollingValue.join(','),
+              startTime: this.pollingData.date[0],
+              endTime: this.pollingData.date[1],
+              taskName: this.pollingData.name,
+              status: this.pollingData.status,
+              taskTime: this.pollingData.beginTask,
+            }).then(res => {
+              if (res.code === 200) {
+                this.loadingType = true;
+                this.pollingData.name = '';
+                this.getTableList();
+                this.$message({
+                  type: 'success',
+                  message: '新增成功',
+                });
+                this.loadingType = false;
+              } else {
+                this.$message({
+                  type: 'error',
+                  message: '新增失败',
+                });
+              }
+            });
+          } else {
+            modificationEquipmentGroup(
+              {
+                deviceGroup: this.patrolStaffValue.join(','),
+                patrolStaff: this.pollingValue.join(','),
+                startTime: this.pollingData.date[0],
+                endTime: this.pollingData.date[1],
+                taskName: this.pollingData.name,
+                status: this.pollingData.status,
+                taskTime: this.pollingData.beginTask,
+              },
+              this.itemId,
+            ).then(res => {
+              if (res.code === 200) {
+                this.loadingType = true;
+                this.pollingData.name = '';
+                this.getTableList();
+                this.$message({
+                  type: 'success',
+                  message: '编辑成功',
+                });
+                this.resetInput();
+                this.loadingType = false;
+              } else {
+                this.$message({
+                  type: 'error',
+                  message: '编辑失败',
+                });
+              }
+            });
+          }
           this.dialogVisible = false;
         } else {
-          console.log('error submit!!');
+          this.$message({
+            type: 'error',
+            message: '操作失败',
+          });
           return false;
         }
       });
@@ -315,6 +555,21 @@ export default {
       this.equipmentType = false;
     },
     handleClose3() {
+      this.addPersonnelType = false;
+    },
+    handleSelectionChange(val) {
+      this.pollingSaveData = val;
+    },
+    // 添加 巡检人员
+    addPolling() {
+      this.pollingData.personnel = '';
+      this.pollingValue.length = 0;
+      if (this.pollingSaveData.length) {
+        this.pollingSaveData.forEach(item => {
+          this.pollingValue.push(item.userId);
+          this.pollingData.personnel += item.name + ';';
+        });
+      }
       this.addPersonnelType = false;
     },
   },
