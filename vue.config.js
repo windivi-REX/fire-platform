@@ -80,8 +80,7 @@ module.exports = {
     sourceMap: false,
     loaderOptions: {
       sass: {
-        // data: `@import "~assets/scss/variables.scss";$src: "${process.env.VUE_APP_SRC}";`
-        // data: `$src: "${process.env.VUE_APP_SRC}";`
+        data: `@import "@/styles/index.scss";`
       },
     },
   },
@@ -110,7 +109,15 @@ module.exports = {
           ['^' + process.env.VUE_APP_PROXY]: '',
         },
       },
+      [process.env.VUE_APP_PROXY_TWO]: {
+        target: `${process.env.VUE_APP_SERVER_TWO}`,
+        ws: true,
+        changeOrigin: true,
+        pathRewrite: {
+          ['^' + process.env.VUE_APP_PROXY_TWO]: ''
+        }
+      }
     },
-    before: app => {},
+    before: app => { },
   },
 };
