@@ -109,7 +109,15 @@ module.exports = {
           ['^' + process.env.VUE_APP_PROXY]: '',
         },
       },
+      [process.env.VUE_APP_PROXY_TWO]: {
+        target: `${process.env.VUE_APP_SERVER_TWO}`,
+        ws: true,
+        changeOrigin: true,
+        pathRewrite: {
+          ['^' + process.env.VUE_APP_PROXY_TWO]: ''
+        }
+      }
     },
-    before: app => {},
+    before: app => { },
   },
 };

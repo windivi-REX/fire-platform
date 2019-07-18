@@ -150,31 +150,13 @@ export const asyncRouterMap = [
   {
     path: '/patrol',
     component: Layout,
-    redirect: '/patrol/patrolManage',
+    redirect: '/patrol/patrolPlan',
     name: 'news',
     meta: {
       title: 'patrolManage',
       icon: 'component',
     },
     children: [
-      {
-        path: 'patrolEquipment',
-        name: 'patrolEquipment',
-        component: () => import('@/view/patrol-equipment/index'),
-        meta: {
-          title: 'patrolEquipment',
-          // icon: 'user'
-        },
-      },
-      {
-        path: 'patrolEquipmentType',
-        name: 'patrolEquipmentType',
-        component: () => import('@/view/patrol-equipmentType/index'),
-        meta: {
-          title: 'patrolEquipmentType',
-          // icon: 'user'
-        },
-      },
       {
         path: 'patrolPlan',
         name: 'patrolPlan',
