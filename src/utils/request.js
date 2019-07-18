@@ -46,58 +46,13 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const res = response.data;
-    if (response.status !== 200 || res.code !== 200) {
+    if (response.status !== 200) {
       Message({
         message: res.msg,
         type: 'error',
         duration: 5 * 1000,
       });
-      // 401:token失效;
-      if (res.code === 400) {
-        if (res.data && res.data.desc) {
-          Message({
-            message: `${res.data.desc}`,
-            type: 'info',
-            duration: 5 * 1000,
-          });
-        } else {
-          Message({
-            message: `${res.msg}`,
-            type: 'info',
-            duration: 5 * 1000,
-          });
-        }
-      }
-      if (res.code === 401) {
-        MessageBox.confirm(
-          '你已被登出，可以取消继续留在该页面，或者重新登录',
-          '确定登出',
-          {
-            confirmButtonText: '重新登录',
-            cancelButtonText: '取消',
-            type: 'warning',
-          },
-        ).then(() => {
-          store.dispatch('FedLogOut').then(() => {
-            location.reload();
-          });
-        });
-      } else if (res.code === 403) {
-        // 没有授权
-        Message({
-          message: `您没有权限`,
-          type: 'error',
-          duration: 5 * 1000,
-        });
-      }
       return Promise.reject('error');
-    }
-    if (response.status !== 200) {
-      Message({
-        message: '错误',
-        type: 'error',
-        duration: 5 * 1000,
-      });
     } else {
       return response.data;
     }

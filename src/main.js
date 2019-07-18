@@ -14,7 +14,7 @@ import './icons';
 
 import router from './router';
 import store from './store';
-
+import SvgIcon from '@/components/SvgIcon/index';
 import Cookies from 'js-cookie';
 import * as filters from './filters';
 import i18n from './lang';
@@ -31,6 +31,7 @@ Vue.prototype.$echarts = echarts;
 
 Vue.directive('scrollBar', scrollbar);
 Vue.use(drag);
+Vue.use(SvgIcon);
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium',
   i18n: (key, value) => i18n.t(key, value),
