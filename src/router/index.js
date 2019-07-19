@@ -158,15 +158,6 @@ export const asyncRouterMap = [
     },
     children: [
       {
-        path: 'patrolPlan',
-        name: 'patrolPlan',
-        component: () => import('@/view/patrol-plan/index'),
-        meta: {
-          title: 'patrolPlan',
-          // icon: 'user'
-        },
-      },
-      {
         path: 'patrolTask',
         name: 'patrolTask',
         component: () => import('@/view/patrol-task/index'),

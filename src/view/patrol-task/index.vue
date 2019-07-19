@@ -16,7 +16,7 @@
 <template>
   <el-card class="box-card">
     <!-- 标题 -->
-    <div class="margin-style">设备组管理</div>
+    <div class="margin-style">巡检任务</div>
     <!-- 搜索功能 -->
     <div class="margin-style">
       <el-select v-model="optionValue" clear @change="optionChange" placeholder="请选择任务状态">
@@ -38,6 +38,7 @@
     <!-- 功能按钮 -->
     <div class="margin-style">
       <el-button type="primary" @click="operationEquipment(1)" icon="el-icon-plus">新增</el-button>
+      <el-button type="primary" icon="el-icon-tickets" disabled>派单</el-button>
     </div>
     <!-- 列表数据 -->
     <el-table
@@ -185,7 +186,7 @@ import {
   modificationEquipmentGroup,
   deleteEquipmentGroup,
   getEquipmentType,
-} from '../../api/patrolTaskApi.js';
+} from '../../api/patrol-task.js';
 export default {
   data() {
     return {
