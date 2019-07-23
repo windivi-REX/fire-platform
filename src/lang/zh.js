@@ -112,6 +112,8 @@ export default {
     deviceList: '设备列表',
     partsMarked: '部件标注',
     locationRegistration: '位置登记',
+    realTimeMsg: '实时消息',
+    historyMsg: '历史消息',
   },
   navbar: {
     logOut: '退出登录',

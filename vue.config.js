@@ -80,7 +80,7 @@ module.exports = {
     sourceMap: false,
     loaderOptions: {
       sass: {
-        data: `@import "@/styles/index.scss";`
+        data: `@import "@/styles/index.scss";`,
       },
     },
   },
@@ -114,10 +114,18 @@ module.exports = {
         ws: true,
         changeOrigin: true,
         pathRewrite: {
-          ['^' + process.env.VUE_APP_PROXY_TWO]: ''
-        }
-      }
+          ['^' + process.env.VUE_APP_PROXY_TWO]: '',
+        },
+      },
+      [process.env.VUE_APP_DEVICE_PROXY]: {
+        target: `${process.env.VUE_APP_DEVICE_SERVER}`,
+        ws: true,
+        changeOrigin: true,
+        pathRewrite: {
+          ['^' + process.env.VUE_APP_DEVICE_PROXY]: '',
+        },
+      },
     },
-    before: app => { },
+    before: app => {},
   },
 };

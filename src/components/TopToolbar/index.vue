@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="top-toolbar-container" :style="{display: topbarDisplay}">
     <span style="letter-spacing:30px;">智慧消防平台</span>
   </div>
 </template>
@@ -7,9 +7,10 @@
 <script>
 export default {
   name: 'TopToolBar',
-
   data() {
-    return {};
+    return {
+      topbarDisplay: 'block',
+    };
   },
 };
 </script>
@@ -18,7 +19,7 @@ export default {
 @import '~@/styles/variables.scss';
 @import '~@/styles/mixin.scss';
 $sign-board-text-color: #00b5fc;
-div.container {
+div.top-toolbar-container {
   font-family: 'SimHei';
   height: $topBarHeight;
   width: 100vw;

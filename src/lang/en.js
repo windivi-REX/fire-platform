@@ -75,6 +75,8 @@ export default {
     deviceList: 'Device List',
     partsMarked: 'Parts Marked',
     locationRegistration: 'Location Registration',
+    realTimeMsg: 'Real Time Message',
+    historyMsg: 'History Message'
   },
   navbar: {
     logOut: 'Log Out',

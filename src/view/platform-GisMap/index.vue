@@ -20,7 +20,14 @@
         <input type="text" placeholder="请输入搜索关键字" />
       </bm-control>
       <bm-control class="display-group-container" anchor="BMAP_ANCHOR_TOP_LEFT">
-        <div class="display-box-container" v-for="(item,key) in displayMap" :key="key">
+        <div
+          class="display-box-container"
+          :class="{active:item.active}"
+          v-for="(item,key) in displayMap"
+          :key="key"
+          @mouseover="item.active = true"
+          @mouseleave="item.active = false"
+        >
           <span
             :style="{fontFamily:'lcd',color: item.color, fontSize: '42px',lineHeight: '34px'}"
           >{{item.value}}</span>
@@ -44,11 +51,12 @@
           pane="floatPane"
           :class="{customPopup: true, active: marker.popupActive}"
           @draw="draw($event,marker)"
-          @mouseover.native="popupOnHover($event,marker)"
-          @mouseleave.native="popupOnLeave($event,marker)"
+          @click.stop.native
+          @mouseover.stop.native="popupOnHover($event,marker)"
+          @mouseleave.stop.native="popupOnLeave($event,marker)"
         >
-          <el-button type="text" @click="closePopup($event,marker)">关闭</el-button>
-          <el-button type="text" @click="toggleIcon($event,marker)">切换图标</el-button>
+          <el-button type="text" @click.stop.native="closePopup($event,marker)">关闭</el-button>
+          <el-button type="text" @click.stop.native="toggleIcon($event,marker)">切换图标</el-button>
         </bm-overlay>
       </bm-marker>
       <!-- <bm-control class="bottom-list-container" anchor="BMAP_ANCHOR_BOTTOM_RIGHT">
@@ -75,9 +83,15 @@
 </template>
 <script>
 // 经度:104.073058,纬度:30.595474
-import BaiduMap from 'vue-baidu-map/components/map/Map.vue';
-import { BmControl, BmOverlay, BmMarker, BmLabel } from 'vue-baidu-map';
+import BaiduMap from '@/components/vue-baidu-map/map/Map.vue';
+import {
+  BmControl,
+  BmOverlay,
+  BmMarker,
+  BmLabel,
+} from '@/components/vue-baidu-map/index.js';
 import DistanceTool from 'bmaplib.distancetool';
+import { mapStyleJson } from './map-style';
 export default {
   components: {
     BaiduMap,
@@ -97,29 +111,28 @@ export default {
       mapType: 'BMAP_NORMAL_MAP',
       mapToken: 'f56cipYUkXBAbVVW1WMsgc6hd3Gpgjnz',
       displayMap: {
-        customers: { value: 1593, color: 'dodgerblue', text: '客户总数' },
-        warnings: { value: 454564, color: 'orange', text: '告警总数' },
-        onlineDevices: { value: 34566, color: 'yellow', text: '在线设备数' },
+        customers: {
+          value: 1593,
+          color: 'dodgerblue',
+          text: '客户总数',
+          active: false,
+        },
+        warnings: {
+          value: 454564,
+          color: 'orange',
+          text: '告警总数',
+          active: false,
+        },
+        onlineDevices: {
+          value: 34566,
+          color: 'yellow',
+          text: '在线设备数',
+          active: false,
+        },
       },
       popupActive: false,
       mapStyle: {
-        styleJson: [
-          {
-            featureType: 'all',
-            elementType: 'geometry',
-            stylers: {
-              //   hue: '#0a3a6a',
-              //   saturation: 89,
-            },
-          },
-          //   {
-          //     featureType: 'water',
-          //     elementType: 'all',
-          //     stylers: {
-          //       color: '#0a3a6a',
-          //     },
-          //   },
-        ],
+        // styleJson: require('./style_config.json'),
       },
       BMapRef: null,
       mapRef: null,
@@ -188,6 +201,7 @@ export default {
     afterMapInit({ BMap, map }) {
       this.BMapRef = BMap;
       this.mapRef = map;
+      map.setMapStyleV2({ styleJson: require('./style_config.json') });
     },
     unmount() {},
     syncCenterAndZoom(e) {
@@ -201,20 +215,16 @@ export default {
       this.togglePopup(marker);
     },
     closePopup(e, marker) {
-      e.stopPropagation();
       marker.showPopup = false;
       marker.popupElement.style.display = 'none';
     },
     toggleIcon(e, marker) {
-      e.stopPropagation();
       marker.icon.url = require('../../assets/image/M.png');
     },
     popupOnHover(e, marker) {
-      e.stopPropagation();
       marker.popupActive = true;
     },
     popupOnLeave(e, marker) {
-      e.stopPropagation();
       marker.popupActive = false;
     },
   },
@@ -224,6 +234,7 @@ export default {
 <style lang="scss" scoped>
 @import '~@/assets/font/lcd/lcd.css';
 .gis-map-container {
+  user-select: none;
   width: 100%;
   .bm-view {
     width: 100%;
@@ -274,6 +285,7 @@ export default {
     background-color: #a9a6dc6e;
     padding: 10px 0;
     @include flex(column, center, center);
+    transition: background-color 0.6s ease-in-out;
     .anchor {
       position: absolute;
       &.left-top {
@@ -283,6 +295,7 @@ export default {
         height: 10px;
         left: -1px;
         top: -1px;
+        transition: width 0.6s ease-in-out, height 0.6s ease-in-out;
       }
       &.left-bottom {
         border-bottom: 1px solid #fff;
@@ -291,6 +304,7 @@ export default {
         height: 10px;
         left: -1px;
         bottom: -1px;
+        transition: width 0.6s ease-in-out, height 0.6s ease-in-out;
       }
       &.right-top {
         border-right: 1px solid #fff;
@@ -299,6 +313,7 @@ export default {
         height: 10px;
         right: -1px;
         top: -1px;
+        transition: width 0.6s ease-in-out, height 0.6s ease-in-out;
       }
       &.right-bottom {
         border-right: 1px solid #fff;
@@ -307,6 +322,28 @@ export default {
         height: 10px;
         right: -1px;
         bottom: -1px;
+        transition: width 0.6s ease-in-out, height 0.6s ease-in-out;
+      }
+    }
+    &.active {
+      background-color: #a9a6dcc4;
+      .anchor {
+        &.left-top {
+          width: 180px;
+          height: 65px;
+        }
+        &.left-bottom {
+          width: 180px;
+          height: 65px;
+        }
+        &.right-top {
+          width: 180px;
+          height: 65px;
+        }
+        &.right-bottom {
+          width: 180px;
+          height: 65px;
+        }
       }
     }
   }

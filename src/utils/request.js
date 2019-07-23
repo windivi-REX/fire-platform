@@ -3,7 +3,7 @@ import { Message, MessageBox } from 'element-ui';
 import store from '@/store';
 import { getToken } from '@/utils/auth';
 const service = axios.create({
-  baseURL: '/proxy',
+  baseURL: process.env.VUE_APP_PROXY,
   timeout: 10000,
 });
 service.interceptors.request.use(

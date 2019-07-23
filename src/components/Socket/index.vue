@@ -34,7 +34,9 @@ export default {
     initWebSocket() {
       // 初始化weosocket
       this.retryConnectTime++;
-      const wsuri = `ws://${location.host}/websocket/${this.url}`;
+      const wsuri = `ws://192.168.1.107:83/websocket${
+        this.url ? `/${this.url}` : ''
+      }`;
       this.websock = new WebSocket(wsuri);
       this.websock.onopen = this.connectSuccess;
       this.websock.onerror = this.connectError;

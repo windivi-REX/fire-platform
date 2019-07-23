@@ -1,13 +1,12 @@
-import { mapGetters } from 'vuex'
-import { generateTitle } from '@/utils/i18n'
+import { mapGetters } from 'vuex';
+import { generateTitle } from '@/utils/i18n';
 export var AQJY_Mixin = {
   computed: {
-    ...mapGetters([
-    ])
+    ...mapGetters([]),
   },
   methods: {
-    generateTitle (title) {
-      return generateTitle(title)
-    }
-  }
-}
+    generateTitle(title) {
+      return generateTitle(title);
+    },
+  },
+};

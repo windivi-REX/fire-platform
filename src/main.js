@@ -2,6 +2,7 @@ import Vue from 'vue';
 
 import '@babel/polyfill';
 import 'babel-polyfill';
+import EventProxy from 'vue-event-proxy';
 
 import '@/icons/iconfont/iconfont';
 import '@/icons/iconfont/index.css';
@@ -21,7 +22,7 @@ import i18n from './lang';
 import Socket from './components/Socket';
 
 import drag from '@/directive/el-dragDialog/index';
-
+import VuePreview from 'vue-preview';
 import Element from 'element-ui';
 import echarts from 'echarts';
 import scrollbar from './directive/scrollbar/scrollbar';
@@ -30,6 +31,7 @@ import App from './App';
 Vue.prototype.$echarts = echarts;
 
 Vue.directive('scrollBar', scrollbar);
+Vue.use(EventProxy);
 Vue.use(drag);
 Vue.use(SvgIcon);
 Vue.use(Element, {
@@ -42,7 +44,16 @@ Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key]);
 });
 Vue.config.productionTip = false;
-
+Vue.use(VuePreview, {
+  mainClass: 'pswp--minimal--dark',
+  barsSize: { top: 0, bottom: 0 },
+  captionEl: false,
+  fullscreenEl: false,
+  shareEl: false,
+  bgOpacity: 0.85,
+  tapToClose: true,
+  tapToToggleControls: false,
+});
 new Vue({
   el: '#app',
   router,

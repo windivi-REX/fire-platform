@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Layout from '@/views/layout/Layout';
+import RouteViewContainer from '@/views/layout/container/route-view-container';
 Vue.use(Router);
 export const constantRouterMap = [
   {
@@ -41,27 +42,46 @@ export const asyncRouterMap = [
         component: () => import('@/view/platform-GisMap/index'),
         meta: {
           title: 'GisMap',
-          // icon: 'user'
+          icon: 'component',
         },
       },
       {
-        path: 'alarm',
-        name: 'alarm',
-        component: () => import('@/view/alarm-center/index'),
+        path: 'alarmCenter',
+        name: 'alarmCenter',
+        component: RouteViewContainer,
         meta: {
           title: 'alarmCenter',
-          // icon: 'peoples'
+          icon: 'component',
+          hidden: true,
         },
+        children: [
+          {
+            path: 'realTimeMsg',
+            component: () => import('@/view/real-time-msg/index'),
+            meta: {
+              title: 'realTimeMsg',
+              icon: 'component',
+            },
+          },
+          {
+            path: 'historyMsg',
+            component: () => import('@/view/history-msg/index'),
+            meta: {
+              title: 'historyMsg',
+              icon: 'component',
+            },
+          },
+        ],
       },
-      {
-        path: 'linkage',
-        name: 'linkage',
-        component: () => import('@/view/linkage-center/index'),
-        meta: {
-          title: 'linkageCenter',
-          // icon: 'peoples'
-        },
-      },
+      //   {
+      //     path: 'linkage',
+      //     name: 'linkage',
+      //     component: () => import('@/view/linkage-center/index'),
+      //     meta: {
+      //       title: 'linkageCenter',
+      //       // icon: 'peoples'
+      //     },
+      //   },
     ],
   },
   {
@@ -133,7 +153,7 @@ export const asyncRouterMap = [
         component: () => import('@/view/user-manage/index'),
         meta: {
           title: 'userManage',
-          // icon: 'user'
+          icon: 'component',
         },
       },
       {
@@ -142,7 +162,7 @@ export const asyncRouterMap = [
         component: () => import('@/view/role-manage/index'),
         meta: {
           title: 'roleManage',
-          // icon: 'user'
+          icon: 'component',
         },
       },
     ],
@@ -163,7 +183,7 @@ export const asyncRouterMap = [
         component: () => import('@/view/patrol-plan/index'),
         meta: {
           title: 'patrolPlan',
-          // icon: 'user'
+          icon: 'component',
         },
       },
       {
@@ -172,7 +192,7 @@ export const asyncRouterMap = [
         component: () => import('@/view/patrol-task/index'),
         meta: {
           title: 'patrolTask',
-          // icon: 'user'
+          icon: 'component',
         },
       },
       {
@@ -181,7 +201,7 @@ export const asyncRouterMap = [
         component: () => import('@/view/patrol-record/index'),
         meta: {
           title: 'patrolRecord',
-          // icon: 'user'
+          icon: 'component',
         },
       },
       {
@@ -190,7 +210,7 @@ export const asyncRouterMap = [
         component: () => import('@/view/maintain-task/index'),
         meta: {
           title: 'maintainTask',
-          // icon: 'user'
+          icon: 'component',
         },
       },
       {
@@ -199,7 +219,7 @@ export const asyncRouterMap = [
         component: () => import('@/view/scrap-task/index'),
         meta: {
           title: 'scrapTask',
-          // icon: 'user'
+          icon: 'component',
         },
       },
     ],

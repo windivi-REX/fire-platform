@@ -1,5 +1,6 @@
 <template>
   <div :class="classObj" class="app-wrapper">
+    <top-toolbar></top-toolbar>
     <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
     <sidebar class="sidebar-container" />
     <div class="main-container">
@@ -12,6 +13,7 @@
 
 <script>
 import { Navbar, Sidebar, AppMain } from './components';
+import TopToolbar from '@/components/TopToolbar/index';
 import ResizeMixin from './mixin/ResizeHandler';
 export default {
   name: 'Layout',
@@ -19,6 +21,7 @@ export default {
     Navbar,
     Sidebar,
     AppMain,
+    TopToolbar,
     // TagsView
   },
   mixins: [ResizeMixin],

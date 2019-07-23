@@ -1,49 +1,64 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm"
-             :model="loginForm"
-             :rules="loginRules"
-             class="login-form"
-             auto-complete="off"
-             label-position="left">
-      <input type="text"
-             style="display:none">
-      <h3 class="title">用户登录</h3>
-      <el-form-item prop="username">
-        <span class="svg-container">
-          <svg-icon icon-class="user" />
-        </span>
-        <el-input v-model="loginForm.username"
+    <el-form
+      ref="loginForm"
+      :model="loginForm"
+      :rules="loginRules"
+      class="login-form"
+      auto-complete="off"
+      label-position="left"
+    >
+      <h3 class="title">智能消火栓监测平台</h3>
+      <el-row type="flex" justify="center" align="center" style="width:100%">
+        <el-col :span="9"></el-col>
+        <el-col :span="6">
+          <el-row type="flex" justify="center" align="center" style="width:100%">
+            <el-col :span="18">
+              <el-form-item prop="username">
+                <span class="svg-container">
+                  <svg-icon icon-class="user" />
+                </span>
+                <el-input
+                  v-model="loginForm.username"
                   name="username"
                   type="text"
                   auto-complete="off"
                   autocomplete="off"
                   placeholder="请输入用户名"
-                  size="mini" />
-      </el-form-item>
-      <el-form-item prop="password">
-        <span class="svg-container">
-          <svg-icon icon-class="password" />
-        </span>
-        <el-input :type="pwdType"
+                  size="mini"
+                />
+              </el-form-item>
+              <el-form-item prop="password">
+                <span class="svg-container">
+                  <svg-icon icon-class="password" />
+                </span>
+                <el-input
+                  :type="pwdType"
                   v-model="loginForm.password"
                   size="mini"
                   name="password"
                   auto-complete="off"
                   :autocomplete="'new-password'"
                   placeholder="请输入密码"
-                  @keyup.enter.native="handleLogin" />
-        <span class="show-pwd"
-              @click="showPwd">
-          <svg-icon icon-class="eye" />
-        </span>
-      </el-form-item>
-      <el-form-item style="height:3.5rem">
-        <el-button :loading="loading"
-                   type="primary"
-                   class="login-btn"
-                   @click.native.prevent="handleLogin">登 录</el-button>
-      </el-form-item>
+                  @keyup.enter.native="handleLogin"
+                />
+                <span class="show-pwd" @click="showPwd">
+                  <svg-icon icon-class="eye" />
+                </span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6" class="flex-col">
+              <el-button
+                type="primary"
+                class="login-btn"
+                :class="{'loading-btn':loading}"
+                @click.native.prevent="handleLogin"
+              >登 录</el-button>
+            </el-col>
+          </el-row>
+        </el-col>
+        <el-col :span="9"></el-col>
+      </el-row>
     </el-form>
     <mask-layer v-show="showMask" />
   </div>
@@ -183,38 +198,38 @@ export default {
 @import '../../styles/variables.scss';
 .login-container {
   .el-form-item {
-    width: 80%;
     @include flex(row, center, center);
-    @include backgroundImg(url('../../assets/image/login-input-bg.png'));
+    margin-bottom: 8px;
+    // @include backgroundImg(url('../../assets/image/login-input-bg.png'));
     .el-form-item__content {
       @include flex(row, center, center);
+      border: 1px solid #075d96;
       width: 100%;
       height: 100%;
+      background-color: #043054de;
     }
   }
   .el-input {
     font-size: 1rem;
-    height: 3.5rem;
+    height: 41px;
     flex: 1 1 80%;
     input {
-      background: transparent !important;
+      background-color: #043054de;
       border: 0px; // border-bottom: 1px solid #989898 !important;
       -webkit-appearance: none;
       border-radius: 0px; // padding: 12px 5px 12px 15px;
       color: #989898;
       height: 100%;
       &:-webkit-autofill {
-        -webkit-box-shadow: 0 0 0px 1000px rgba(105, 59, 138, 1) inset !important;
-        box-shadow: 0 0 0px 1000px rgba(105, 59, 138, 1) inset !important;
-        -webkit-text-fill-color: orange !important;
+        -webkit-box-shadow: 0 0 0px 1000px #043054de inset !important;
+        box-shadow: 0 0 0px 1000px #043054de inset !important;
+        -webkit-text-fill-color: rgb(19, 148, 253) !important;
       }
-    }
-    .show-pwd {
-      top: 1rem;
     }
   }
   .el-form-item__error {
-    left: 47px !important;
+    left: -86px !important;
+    top: 14px;
   }
 }
 </style>
@@ -224,57 +239,66 @@ export default {
 @import '../../styles/variables.scss';
 .login-container {
   position: fixed;
-  height: calc(100vh - #{$topBarHeight});
+  height: 100%;
   width: 100%;
-  @include backgroundImg(url('../../assets/image/login-background.jpg'));
+  @include backgroundImg(url('../../assets/image/login-background.png'));
   .login-form {
     @include flex(column, center, center);
     position: absolute;
-    left: 60.5%;
+    left: 0%;
     right: 0px;
-    width: 450px;
-    height: 386px;
+    top: 25%;
+    width: 100%;
+    height: 266px;
     max-width: 100%;
     bottom: 0;
-    top: 38.6%;
-    @include backgroundImg(url('../../assets/image/login-form-bg.png'));
+    @include backgroundImg(url('../../assets/image/login-mask.png'));
   }
   .svg-container {
-    padding: 6px 5px 6px 15px;
-    color: #87a0bd;
+    padding: 5px 16px 0px 16px;
+    color: #fff;
     .svg-icon {
-      width: 1.5em;
-      height: 1.5em;
+      width: 1.3em;
+      height: 1.3em;
     }
   }
   .title {
     font-family: 'SimHei';
-    font-size: 1.625rem;
+    font-size: 2.5rem;
     font-weight: 500;
-    color: #00b4ff;
+    color: #fff;
     text-align: center;
   }
   .login-btn {
-    width: 100%;
-    height: 100%;
+    width: 92px;
+    height: 92px;
     text-align: center;
     background-color: transparent;
     font-size: 1.25rem;
     border: none;
+    border-radius: 0;
+    @include backgroundImg(url('../../assets/image/login-btn.png'));
     &:hover {
       color: #00b4ff;
       background-color: rgba(32, 84, 158, 0.54);
       box-shadow: 3px 4px 9px rgba(1, 36, 87, 0.5);
     }
+    &.loading-btn {
+      pointer-events: none;
+    }
   }
   .show-pwd {
     position: absolute;
     right: 2.125rem;
-    top: 1rem;
+    top: 0.2rem;
     font-size: 1rem;
     color: $dark_gray;
     cursor: pointer;
     user-select: none;
   }
+}
+
+.flex-col {
+  @include flex(row, center, flex-start);
 }
 </style>

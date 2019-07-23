@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <top-toolbar></top-toolbar>
     <router-view />
     <copyright></copyright>
     <socket
@@ -17,14 +16,15 @@
 </template>
 
 <script>
-import TopToolbar from '@/components/TopToolbar/index';
+// import TopToolbar from '@/components/TopToolbar/index';
 import Copyright from '@/components/Copyright/index';
 import Socket from '@/components/Socket/index';
+import { EventEntity as AlarmCenterEventEntity } from './view/real-time-msg/event';
 export default {
   name: 'App',
   mixins: [],
   components: {
-    TopToolbar,
+    // TopToolbar,
     Copyright,
     Socket,
   },
@@ -38,18 +38,13 @@ export default {
     };
   },
   methods: {
-    socketConnectSuccess(data) {
-      setInterval(() => {
-        this.$store.dispatch('examSendMsg', {
-          code: -2,
-        });
-      }, 15000);
-    },
+    socketConnectSuccess(data) {},
     socketMsgHandle(socket) {
       let { data: msg } = socket;
       msg = JSON.parse(msg);
       switch (msg.code) {
-        case '':
+        case 1:
+          this.$emit(`${AlarmCenterEventEntity.nextMessage}`, msg.data);
           break;
         default:
           console.log(`socketMsgHandle:${JSON.stringify(msg)}`);
